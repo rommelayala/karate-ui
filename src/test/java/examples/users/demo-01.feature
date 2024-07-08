@@ -12,20 +12,22 @@ Feature: browser automation 1
   # * configure driver = { type: 'iedriver', showDriverLog: true, httpConfig: { readTimeout: 120000 } }
 
 
-  Scenario: try to login to github
-    and then do a google search
-    waitFor('#myId')
-    Given driver 'https://github.com/login'
-    And input('#login_field', 'dummy')
-    And input('#password', 'world')
-    When submit().click("input[name=commit]")
-    Then match html('.flash-error') contains 'Incorrect username or password.'
-
-    Given driver 'https://google.com'
-    When submit().click("button[id='L2AGLb']")
-    And input("textarea[name=q]", 'karate dsl')
-    When submit().click("input[name=btnI]")
-    Then waitForUrl('https://github.com/karatelabs/karate')
+  Scenario: try to login https://practicetestautomation.com/practice-test-login/
+    
+    Given driver 'https://practicetestautomation.com/practice-test-login/'
+    And input('#username', 'student')
+    And input('#password', 'Password123')
+    When click("#submit")
+    # Usando class para encontrar elementos
+    * print "Usando class para encontrar elementos"
+    Then waitFor('.post-title') 
+    And match text('.post-title') == 'Logged In Successfully'
+    * print "Success test using class selector"
+    # Usando Css selector para encontrar elementos
+    * print "Usando CSS para encontrar elementos"
+    Then waitFor('h1.post-title')         // Usando elemento y clase selector
+    And match text('h1.post-title') == 'Logged In Successfully' 
+    * print "Success test using CSS selector"
 
 
   Scenario:launch tests on ultimateqa.com/filling-out-forms/ form without captcha
@@ -42,19 +44,6 @@ Feature: browser automation 1
     And match text('#et_pb_contact_form_0 ') == 'Thanks for contacting us'
     And match attribute('#et_pb_contact_form_0', 'style') == 'opacity: 1;'
 
-
-  Scenario:launch tests on ultimateqa.com/filling-out-forms/ form with captcha
-    Given driver 'https://ultimateqa.com/filling-out-forms/'
-    And waitForEnabled('#et_pb_contact_name_1')
-    And match driver.title == 'Filling Out Forms - Ultimate QA'
-    And input('input[name=et_pb_contact_name_1]', 'test input')
-    And input('#et_pb_contact_message_0', 'esto es una prueba de rellenar formularios')
-    #Haciendo click a elemetos por css
-    When click('button[name=et_builder_submit_button]')
-    And waitForText('#et_pb_contact_form_0', 'Thanks for contacting us')
-    #And match text('#et_pb_contact_form_0 .et-pb-contact-message p') == 'Thanks for contacting us'
-    And match text('div[id="et_pb_contact_form_0"]>div[class="et-pb-contact-message"]') == 'Thanks for contacting us'
-    And match attribute('#et_pb_contact_form_0', 'style') == 'opacity: 1;'
 
   Scenario:launch tests on https://demoqa.com/ to test submit text into a form
     Given driver 'https://demoqa.com/text-box'

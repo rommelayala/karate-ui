@@ -1,3 +1,4 @@
+@debug
 Feature: browser automation with tables
 
     Background:
@@ -49,7 +50,7 @@ Feature: browser automation with tables
         * def featureTable = users
         * print 'La variable featureTable -> ', featureTable
 
-    @debug
+
     Scenario: Extract and convert HTML table and print the values in Json format
         Given url 'https://the-internet.herokuapp.com/tables'
         When method get
@@ -65,15 +66,15 @@ Feature: browser automation with tables
             var headers = table.select('th').eachText();
             var rows = table.select('tr');
             var data = [];
-            
+
             // skip header row
-            for (var i = 1; i < rows.size(); i++) { 
-                var cells = rows.get(i).select('td');
-                var row = {};
-                for (var j = 0; j < cells.size(); j++) {
-                    row[headers.get(j)] = cells.get(j).text();
-                }
-                data.push(row);
+            for (var i = 1; i < rows.size(); i++) {
+            var cells = rows.get(i).select('td');
+            var row = {};
+            for (var j = 0; j < cells.size(); j++) {
+            row[headers.get(j)] = cells.get(j).text();
+            }
+            data.push(row);
             }
             return data;
             }
@@ -81,5 +82,18 @@ Feature: browser automation with tables
 
         * def tableData = call extractTableFromHTML html
         * def users = tableData
-
         * print users
+    
+    Scenario: 
+        Given driver 'https://www.saucedemo.com/'
+        And input("#user-name", "standard_user")
+        And input("#password", "secret_sauce")
+        When click("#login-button")
+        Then match text(".title") == "Products"
+        And match text(".app_logo") == "Swag Labs"
+        And waitForEnabled("#inventory_container").click()
+        #Un elemento esta presente
+        And assert optional('#inventory_container').present
+        * def inventoryItems = locateAll(".inventory_item")
+        And  assert inventoryItems.length > 0
+        * print 'Number of inventory items:', inventoryItems.length

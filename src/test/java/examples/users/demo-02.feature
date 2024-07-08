@@ -55,146 +55,6 @@ Feature: browser automation 1
     And match attribute("span[class='rct-checkbox']>svg", 'class') == 'rct-icon rct-icon-uncheck'
 
   Scenario:launch tests on https://demoqa.com/ to check webTables
-
-    # Start the driver and navigate to the webtables page
-    Given driver 'https://demoqa.com/webtables'
-    # Wait for the 'Add' button to be enabled and click on it
-    And waitForEnabled("button[id='addNewRecordButton']")
-    And click("button[id='addNewRecordButton']")
-    # Fill in the form to add a new record to the webtable
-    And input("input[id='firstName']", 'Lolo')
-    And input("input[id='lastName']", 'LoloLastname')
-    And input("input[id='userEmail']", 'lolo@lolo.com')
-    And input("input[id='age']", '30')
-    And input("input[id='salary']", '3000')
-    And input("input[id='department']", 'IT')
-    # Submit the form
-    And click('#submit')
-    # Utilizar scriptAll para obtener texto de todas las celdas en las filas de la tabla
-    * print '-Se lanza los cellTexts:---'
-    * def cellTexts = scriptAll('.rt-tr-group', '_.innerText') 
-    * print '- Iterando sobre cellTexts:'
-    * def validateStringInWebtable =
-      """
-      function(text, stringToValidate) {
-        let texto = text;
-        if (texto.includes(stringToValidate)) {
-          console.log('Encontrado:', texto);
-          return true;
-        }
-        if (!texto) {
-          console.log('No hay texto ', texto);
-          return false;
-        }
-        if (texto.trim() === '') {
-          console.log('El texto está vacío, ', texto);
-          return false;
-        }
-        if (isNaN(texto)) {
-          console.log('El texto es NAN', texto);
-          return false;
-        }
-      }
-      """
-
-    * eval karate.forEach(cellTexts, function(text, index) { console.log('Index:', index); validateStringInWebtable(text, 'Cierra');})
-    
-    # Devuelve id de la columna que contiene el texto 'Email'
-    * def rowHeader = scriptAll('.rt-thead -header', '_.innerText')
-    * def returnIdColumnFromText =
-      """
-      function(text, stringToValidate) {
-      let texto = text;
-      if (texto.includes(stringToValidate)) {
-        console.log('Encontrado:', texto);
-        return true;
-      }
-      if (!texto) {
-        console.log('No hay texto ', texto);
-        return false;
-      }
-      if (texto.trim() === '') {
-        console.log('El texto está vacío, ', texto);
-        return false;
-      }
-      if (isNaN(texto)) {
-        console.log('El texto es NAN', texto);
-        return false;
-      }
-      return index;
-      }
-      """
-    * def columnIndex = -1
-    * eval karate.forEach(rowHeader, function(text, index) { if (returnIdColumnFromText(text, 'Email')) { columnIndex = index; } })
-    * print 'El índice de la columna que contiene el texto "email" es:', columnIndex
-
-
-#* def findInColumn = read('../../resources/findInTable.js')
-#* def params = { columnName: 'First Name', text: 'Lolo' }
-#* def result = call findInColumn params
-#Then assert result != null
-#And print 'Encontrado:', result
-
-
-  Scenario:launch tests on https://demoqa.com/ to check webTables
-  
-  Given driver 'https://demoqa.com/webtables'
-    # Wait for the 'Add' button to be enabled and click on it´
-    And waitForEnabled("button[id='addNewRecordButton']")
-    And click('{button}Add')
-    # Fill the form to add a new record to the webtable
-    And input("input[id='firstName']", 'Lolo')
-    And input("input[id='lastName']", 'LoloLastname')
-    And input("input[id='userEmail']", 'lolo@lolo.com')
-    And input("input[id='age']", '30')
-    And input("input[id='salary']", '3000')
-    And input("input[id='department']", 'IT')
-    
-    And click('{}Submit')
-    #* delay(2000)
-    # And match html('//div[contains(@class, "rt-tr-group")][4]//div[contains(@class, "rt-td")][5]') == '<div class="rt-td" role="gridcell" style="flex: 100 0 auto; width: 100px;">lolo@lolo.com</div>'
-    * waitForText('//div[contains(@class, "rt-tr-group")][4]//div[contains(@class, "rt-td")][4]', 'lolo@lolo.com')
-    * def element = locate('//div[contains(@class, "rt-tr-group")][4]//div[contains(@class, "rt-td")][4]')
-    * print element
-
-Scenario: Validatattion schema of the articles
-    
-    * def timeValidator = read('classpath:helpers/timeValidator.js')
-
-    Given params {limit: 10, offset: 0}
-    Given url 'https://api.realworld.io/api/'
-    And path 'articles'
-    When method Get
-    Then status 200
-    #El numero de articulos es un array de size 10
-    And match response.articles == '#[10]'
-    #verifica el valor del elemnto articlesCount del json
-    #And match response.articlesCount == 278
-    #And match response.articlesCount != 501
-    #And match response == { "articles" : "##array" , "articlesCount": 251}
-    #Comprueba del primer articulo el campo createdAt contenga determinado valor
-    And match each response.articles ==
-    """
-        {
-            "slug": "#string",
-            "title": "#string",
-            "description": "#string",
-            "body": "#string",
-            "tagList": "#array",
-            "createdAt": "#? timeValidator(_)",
-            "updatedAt": "#? timeValidator(_)",
-            "favorited": "#boolean",
-            "favoritesCount": '#number',
-            "author": {
-                "username": "#string",
-                "bio": "##string",
-                "image": "#string",
-                "following": "#boolean"
-            }
-        }
-    """
-
-  Scenario:launch tests on https://demoqa.com/ to check webTables
   
    * def valueToBeSearchedInTheTable = 'Lolo'
    * def valueToBeSearchedInTheColumn = 'Salary'
@@ -225,7 +85,7 @@ Scenario: Validatattion schema of the articles
           }
         ); 
       """
-    * print 'El celltexts -> ',cellTexts
+    #* print 'El celltexts -> ',cellTexts
     # XXX Fi Convert the text of the cell elements
     # --- Convert the text of the header elements and build a json object based on the index and the text
     # Get the header elements
@@ -243,13 +103,7 @@ Scenario: Validatattion schema of the articles
     * print 'El headerTexs --> ',headerTexts
     # XXX Fi Convert the text of the header elements  
     # --- Search index of the first match (Salary) in the header elements
-    * def valueToBeSearchedInTheColumn
-    * def searchFor = 
-    """
-      { index: '#number',
-      text: 'Salary'}
-    """
-    
+    * def searchFor = { index: '#number',text:'Salary'}
     * def foundAt = []
     * def fun = 
         """
